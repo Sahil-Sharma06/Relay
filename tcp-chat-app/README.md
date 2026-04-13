@@ -1,17 +1,34 @@
-# Multi-Client TCP Chat App (Python)
+# Multi-Client TCP Chat Application
 
-This project is a terminal-based multi-client chat application built with Python's built-in `socket` and `threading` modules.
+A terminal-based real-time chat system built in Python using only built-in libraries.
 
-It demonstrates:
-- TCP client-server communication
-- Real-time message broadcasting to multiple clients
-- Concurrent I/O using threads
-- Graceful handling of disconnects and broken connections
+This project uses a client-server architecture:
+- `server.py` handles multiple client connections and message routing.
+- `client.py` lets each user send and receive messages simultaneously.
+
+## Features
+
+- Multi-client TCP chat using sockets
+- Threaded server (one handler thread per client)
+- Threaded client (separate send/receive threads)
+- Username-based identity for each user
+- Broadcast messaging (no echo back to sender)
+- Private messaging with `/dm`
+- Room-based messaging (`/join`, `/leave`, `/rooms`, `/where`)
+- Delivery receipts with message IDs
+- Message history and server statistics
+- Admin moderation commands (`/kick`, `/mute`, `/ban`)
+- Rate limiting to reduce spam
+- Graceful disconnect handling
 - UTF-8 encoding/decoding for all network data
-- Command parsing and stateful server features (DMs, rename, history, stats)
-- Room/channel based chat routing
-- Delivery receipts with server-assigned message IDs
-- Rate limiting and moderation controls
+
+## Tech Stack
+
+- Python 3
+- `socket`
+- `threading`
+- `argparse`
+- `collections` and `datetime`
 
 ## Project Structure
 
@@ -22,64 +39,62 @@ tcp-chat-app/
 └── README.md
 ```
 
-## How to Run
+## Setup and Run
 
-1. Start the server:
-
-```bash
-python server.py
-```
-
-Optional server arguments:
+1. Open terminal in project root.
+2. (Optional) activate virtual environment.
+3. Start server:
 
 ```bash
+cd tcp-chat-app
 python server.py --host 127.0.0.1 --port 12345 --backlog 10
 ```
 
-Interview/demo-friendly startup with admin and throttling config:
+4. Open separate terminals for clients and run:
 
 ```bash
-python server.py --host 127.0.0.1 --port 12345 --admins admin,alice --rate-max 8 --rate-window 5
-```
-
-2. Start one or more clients in separate terminals:
-
-```bash
-python client.py
-```
-
-Optional client arguments:
-
-```bash
+cd tcp-chat-app
 python client.py --host 127.0.0.1 --port 12345
 ```
 
-3. Enter a username in each client when prompted, then start chatting.
+5. Enter username in each client and start chatting.
 
-## Commands
+## Server Options
 
-- Normal text: sends a chat message to all other clients
-- `/help`: shows all available commands
-- `/list`: shows online users with their current room
-- `/rooms`: shows active rooms and member counts
-- `/where`: shows your current room
-- `/join <room>`: joins a room (alphanumeric names)
-- `/leave`: returns to lobby
-- `/dm <user> <message>`: sends a private message
-- `/rename <new_name>`: changes your display name
-- `/history [n]`: shows last `n` messages from server history
-- `/stats`: shows online user count and total messages sent
-- `/kick <user>`: admin command to disconnect a user
-- `/mute <user> <seconds>`: admin command to mute a user temporarily
-- `/ban <user>`: admin command to ban a username and disconnect that user
-- `/quit`: disconnects the client cleanly
-- `/clear` (client local command): clears the terminal screen
+```bash
+python server.py --host 127.0.0.1 --port 12345 --backlog 10 --admins admin,alice --rate-max 8 --rate-window 5
+```
 
-## Notes
+- `--host`: interface to bind
+- `--port`: server port
+- `--backlog`: listen backlog
+- `--admins`: comma-separated admin usernames
+- `--rate-max`: max messages per window
+- `--rate-window`: rate limit window in seconds
 
-- Default host/port are `127.0.0.1:12345`.
-- The server listens with backlog `5` and supports multiple simultaneous clients.
-- Messages are not echoed back to the sender.
-- Server logs connection events and chat messages into `chat_log.txt`.
-- If a username is already in use, the server auto-adjusts it to keep usernames unique.
-- Chat messages are room-scoped and include a server-assigned message ID plus delivery ACK to sender.
+## Chat Commands
+
+- Normal text: send message to users in your room
+- `/help`: show commands
+- `/list`: list online users with room info
+- `/rooms`: show active rooms
+- `/where`: show your current room
+- `/join <room>`: join a room
+- `/leave`: return to lobby
+- `/dm <user> <message>`: private message
+- `/rename <new_name>`: change username
+- `/history [n]`: show last `n` messages
+- `/stats`: show server stats
+- `/kick <user>`: admin only
+- `/mute <user> <seconds>`: admin only
+- `/ban <user>`: admin only
+- `/quit`: disconnect cleanly
+- `/clear`: client-only command to clear terminal
+
+## What This Project Demonstrates
+
+- Network programming fundamentals with TCP
+- Concurrency with threads
+- Shared-state synchronization using locks
+- Protocol-style command parsing
+- Reliability features (acknowledgements, moderation, throttling)
