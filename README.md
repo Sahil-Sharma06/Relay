@@ -33,7 +33,7 @@ This project uses a client-server architecture:
 ## Project Structure
 
 ```text
-tcp-chat-app/
+Relay/
 ├── server.py
 ├── client.py
 └── README.md
@@ -46,14 +46,12 @@ tcp-chat-app/
 3. Start server:
 
 ```bash
-cd tcp-chat-app
 python server.py --host 127.0.0.1 --port 12345 --backlog 10
 ```
 
 4. Open separate terminals for clients and run:
 
 ```bash
-cd tcp-chat-app
 python client.py --host 127.0.0.1 --port 12345
 ```
 
